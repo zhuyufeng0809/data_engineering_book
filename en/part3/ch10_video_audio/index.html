@@ -1,0 +1,834 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="大模型数据工程：架构、算法及项目实战">
+      
+      
+        <meta name="author" content="ustc">
+      
+      
+        <link rel="canonical" href="https://datascale-ai.github.io/data_engineering_book/en/part3/ch10_video_audio/">
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.39">
+    
+    
+      
+        <title>第10章 视频与音频数据工程 - Data Engineering for Large Models: Architecture, Algorithms & Projects</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.8c3ca2c6.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+    html.glightbox-open { overflow: initial; height: 100%; }
+    .gslide-title { margin-top: 0px; user-select: text; }
+    .gslide-desc { color: #666; user-select: text; }
+    .gslide-image img { background: white; }
+    .gscrollbar-fixer { padding-right: 15px; }
+    .gdesc-inner { font-size: 0.75rem; }
+    body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+    body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+    body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}</style> <script src="../../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#10" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../" title="Data Engineering for Large Models: Architecture, Algorithms &amp; Projects" class="md-header__button md-logo" aria-label="Data Engineering for Large Models: Architecture, Algorithms & Projects" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Data Engineering for Large Models: Architecture, Algorithms & Projects
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              第10章 视频与音频数据工程
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="red"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../../part3/ch10_video_audio/" hreflang="zh" class="md-select__link">
+              简体中文
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../../../ja/part3/ch10_video_audio/" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/datascale-ai/data_engineering_book/tree/main" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../" title="Data Engineering for Large Models: Architecture, Algorithms &amp; Projects" class="md-nav__button md-logo" aria-label="Data Engineering for Large Models: Architecture, Algorithms & Projects" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Data Engineering for Large Models: Architecture, Algorithms & Projects
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/datascale-ai/data_engineering_book/tree/main" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Table of Contents
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preface/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preface
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation-status/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chinese 2026 Edition Status
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#101" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.1 音视频数据为什么“看起来多、可用样本少”
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.1 音视频数据为什么“看起来多、可用样本少”">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1011" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.1.1 维度扩展：从二维到四维时空序列
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1012" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.1.2 看似丰富，实则可用样本有限
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1013" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.1.3 解码算力与存储瓶颈
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.2 切片、转写与时序对齐的“三轨并行流水线”
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.2 切片、转写与时序对齐的“三轨并行流水线”">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1021-scene-segmentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.2.1 视觉提取：镜头切分与场景分段（Scene Segmentation）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1022-asr-diarization" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.2.2 听觉处理：转写、降噪与说话人分离（ASR &amp; Diarization）
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.2.2 听觉处理：转写、降噪与说话人分离（ASR & Diarization）">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#a-whisperx-asr" class="md-nav__link">
+    <span class="md-ellipsis">
+      A. 语义层提取：基于 WhisperX 的大规模 ASR
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#b-denoiser-layer" class="md-nav__link">
+    <span class="md-ellipsis">
+      B. 降噪与音源分离（Denoiser Layer）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#c-speaker-diarization" class="md-nav__link">
+    <span class="md-ellipsis">
+      C. 说话人分离（Speaker Diarization）
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1023" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.2.3 字幕、语音、画面的时间对齐
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#103" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.3 事件标签生成与错位过滤
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.3 事件标签生成与错位过滤">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1031-event-detection-grounding" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.3.1 多层级动态事件标签生成（Event Detection &amp; Grounding）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1032" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.3.2 音画错位检测
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#104" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.4 成本核算、量化设计与吞吐优化
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.4 成本核算、量化设计与吞吐优化">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1041-cpugpu-io" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.4.1 解码算力（CPU/GPU）与 I/O 带宽
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#105" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.5 真实失败案例与下一章衔接
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10.5 真实失败案例与下一章衔接">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1051-p" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.5.1 万小时视频失败复盘（P 项目系列）
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1052" class="md-nav__link">
+    <span class="md-ellipsis">
+      10.5.2 本章总结与下一章衔接
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      参考文献
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="10">第10章 视频与音频数据工程<a class="headerlink" href="#10" title="Permanent link">&para;</a></h1>
+<p>继自然语言文本（第一、二篇）和静态图文解析（第八、九章）之后，本章进入新一代多模态大模型数据工程的另一个层面——<strong>长序列时序数据工程（Temporal Video &amp; Audio Data Engineering）</strong>。</p>
+<p>基于图文对或单帧截图的训练只能让模型识别静态内容：它能认识各种苹果，但难以理解“一颗苹果从桌上掉落、滚进床底并发出撞击声”这一过程中所涉及的视听同步与时间因果。只有系统地建模时间序列，模型才有可能成为 Sora、Gemini 1.5 Pro 这样能够刻画物理与声学规律的“<strong>世界模拟器（World Simulators）</strong>”。</p>
+<p>这也意味着，数据工程的复杂度从二维平面进一步扩展到了时空序列。</p>
+<h2 id="101">10.1 音视频数据为什么“看起来多、可用样本少”<a class="headerlink" href="#101" title="Permanent link">&para;</a></h2>
+<p>许多刚接手多模态项目的架构师容易产生一种“数据过剩”的错觉：YouTube 和 TikTok 每天新增上百万小时视频，似乎是取之不尽的数据来源。然而真正启动预训练预处理管线时，常常会发现 1000 TB 原始视频中，真正可用的样本筛选下来不到 10 TB。</p>
+<p>这种落差主要来自以下三个原因：</p>
+<h3 id="1011">10.1.1 维度扩展：从二维到四维时空序列<a class="headerlink" href="#1011" title="Permanent link">&para;</a></h3>
+<p>处理纯图片时，即便分辨率较高（如 4K AnyRes），表达形式也仅限于 <span class="arithmatex">\((W \times H \times C)\)</span> 的二维张量。而视频在此基础上多出一个维度：<span class="arithmatex">\((T \times W \times H \times C)\)</span>。
+<span class="arithmatex">\(T\)</span> 代表时间帧数（Timesteps）。即便只有 1 分钟、30 FPS 的短视频，也会产生 1,800 帧连续高清图像。原本可控的 <code>CLIP Score</code> 计算与视觉 Token 压缩算子，在这种规模的时序张量面前，很容易触发 GPU Out-of-Memory（OOM）。因此通常需要设计严格的<strong>视频抽帧（Key-frame Sampling）</strong>体系，代价是丢弃 90% 以上的帧信息。</p>
+<h3 id="1012">10.1.2 看似丰富，实则可用样本有限<a class="headerlink" href="#1012" title="Permanent link">&para;</a></h3>
+<p>1000 TB 的原始视频中，约 80% 属于以下两类：
+1. <strong>静止冗余</strong>：例如一段两小时的在线网课，画面可能有一整段时间只是静态 PPT 与右下角一张几乎不动的讲师人脸。如果让框架将这数千张同质画面全部编码进训练样本，会使梯度被无效信号带偏，对模型能力提升基本没有贡献。
+2. <strong>底噪与音画错位</strong>：大量生活 VLOG 混杂着风噪与背景轰鸣，也常见“画面里的人在打高尔夫、背景音乐却是流行歌”的“音画错位（Audio-Visual Misalignment）”样本。对于需要学习物理因果（如看到玻璃破碎画面要听到对应声音）的模型，这些样本都属于风险较高的训练数据。</p>
+<h3 id="1013">10.1.3 解码算力与存储瓶颈<a class="headerlink" href="#1013" title="Permanent link">&para;</a></h3>
+<p>正如 <strong>第 3 章</strong> 与 <strong>第 6 章（高效加载篇）</strong> 中讨论过的那样，存储文本只需读取字节流，而长视频在训练期间的动态加载涉及底层文件系统的复杂处理。
+视频数据通常以压缩格式（H.264/H.265/VP9）存储。要提取模型可用的原始像素帧序列与音频采样率，必须先在加载阶段执行硬解码（Decoding）。当 100 张 H100 等待批次数据时，CPU Data Loader 与集群 I/O 带宽容易因为同时解压数百 MB 的 MP4 流而出现阻塞。</p>
+<hr />
+<h2 id="102">10.2 切片、转写与时序对齐的“三轨并行流水线”<a class="headerlink" href="#102" title="Permanent link">&para;</a></h2>
+<p>要处理这种四维数据，早期图文对时代“一图配一句（Image-Text Pair）”的处理模式已不适用。我们需要构建能并行处理视觉、声学和文本三条独立轨道的“<strong>音视频样本构建流水线</strong>”。</p>
+<p><a class="glightbox" href="../../../images/part3/av_sample_pipeline.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="音视频样本构建全流程图" src="../../../images/part3/av_sample_pipeline.png" /></a></p>
+<p><em>图 10-1：音视频切片与对齐分布式工业管线（Audio-Video Pipeline） —— 左侧原始 Video Lake 中的混合视频被拆分为视觉、声学双轨并行处理。视觉帧提取器与声学分离器（Diarization）独立提取特征后，汇入跨模态时间对齐引擎（Temporal Alignment Engine），最终生成时间戳严格对齐的多模态训练样本。</em></p>
+<h3 id="1021-scene-segmentation">10.2.1 视觉提取：镜头切分与场景分段（Scene Segmentation）<a class="headerlink" href="#1021-scene-segmentation" title="Permanent link">&para;</a></h3>
+<p>在进入训练之前，超长视频（例如 2 小时的电影）需要先被切分为逻辑与镜头连贯的小片段（Clips），通常长度为 10–30 秒。不能使用“按每 10 秒固定切一刀”的方式，因为这容易把一个连贯动作或一句话从中间截断，造成语义损失。</p>
+<ol>
+<li><strong>镜头切换点检测（Shot Boundary Detection）</strong>
+ 视觉流水线（Top Path）中需要加入一道快速检测环节，例如双阈值颜色直方图比对算法或轻量级的两帧光流差异（Optical Flow Difference）计算，用以识别由机位变化、剪辑引起的硬切与软渐变。只有同一镜头内的连续帧，才能作为一个完整的事件单元（Event Grounding）输入预训练视觉模型。</li>
+</ol>
+<p><a class="glightbox" href="../../../images/part3/%E5%9B%BE8_1_%E8%A7%86%E9%A2%91%E5%9C%BA%E6%99%AF%E5%88%87%E5%88%86%E7%9A%84%E4%B8%A4%E7%A7%8D%E7%AD%96%E7%95%A5%E4%B8%8EHSV%E7%9B%B4%E6%96%B9%E5%9B%BE%E5%B7%AE%E5%BC%82.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="视频场景切分的直方图变化" src="../../../images/part3/%E5%9B%BE8_1_%E8%A7%86%E9%A2%91%E5%9C%BA%E6%99%AF%E5%88%87%E5%88%86%E7%9A%84%E4%B8%A4%E7%A7%8D%E7%AD%96%E7%95%A5%E4%B8%8EHSV%E7%9B%B4%E6%96%B9%E5%9B%BE%E5%B7%AE%E5%BC%82.png" /></a>
+<em>图10-2：直方图差分策略 —— 在密集帧序列中，通过比较相邻两帧在 HSV 色彩空间的差异，可以以较低成本检测出过场动画，控制视觉片段的语义边界。</em></p>
+<ol>
+<li><strong>自适应抽帧（Adaptive Sub-sampling）</strong>
+ 切片完成后，20 秒内的镜头虽然逻辑连贯，但动作幅度可能很小。可以部署小模型，持续比较当前帧与上一保留帧在稠密视觉特征（如 DINOv2 Embedding）上的距离，超过预设的欧氏距离阈值（说明画面有新内容）才打标保留。一段原本 600 帧的 20 秒切片可能因此被压缩到约 10 张关键帧，视觉输入侧的负载相应下降约 98%。</li>
+</ol>
+<h3 id="1022-asr-diarization">10.2.2 听觉处理：转写、降噪与说话人分离（ASR &amp; Diarization）<a class="headerlink" href="#1022-asr-diarization" title="Permanent link">&para;</a></h3>
+<p>与视觉抽帧并行的底层通道（Bottom Path）负责提取语音语义。
+首先执行<strong>多路音轨分离（Audio Stripping）</strong>，然后进入三层处理：</p>
+<h4 id="a-whisperx-asr">A. 语义层提取：基于 WhisperX 的大规模 ASR<a class="headerlink" href="#a-whisperx-asr" title="Permanent link">&para;</a></h4>
+<p>对于语音轨，需要调用 Whisper 或 WhisperX 等开源框架，将含多种口音的语音流转写为结构化文字序列。</p>
+<p><a class="glightbox" href="../../../images/part3/%E5%9B%BE8_2_ASR%E4%B8%8EWhisperX%E7%9A%84%E7%B2%BE%E5%BA%A6%E5%AF%B9%E6%AF%94.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="ASR与WhisperX精度差距" src="../../../images/part3/%E5%9B%BE8_2_ASR%E4%B8%8EWhisperX%E7%9A%84%E7%B2%BE%E5%BA%A6%E5%AF%B9%E6%AF%94.png" /></a>
+<em>图 10-3：大规模 ASR 效果对比 —— 大语言模型如果接收的是错误的 ASR 转写（例如把 <code>I love apples.</code> 听写成 <code>I love maples.</code>），下游推理的稳定性会显著下降。引入时间动态校准和多路声学解码的改进版可以减少长时序对齐中的漂移。</em></p>
+<h4 id="b-denoiser-layer">B. 降噪与音源分离（Denoiser Layer）<a class="headerlink" href="#b-denoiser-layer" title="Permanent link">&para;</a></h4>
+<p>并非所有视频都拥有演播室级别的隔音条件，野外采集数据常混入风噪或机械共鸣。需要使用 Demucs 等深度学习音源分离算法（Source Separation），将底层音乐（BGM）、环境声（Environment Noise）与人声（Vocal）分离开来。</p>
+<h4 id="c-speaker-diarization">C. 说话人分离（Speaker Diarization）<a class="headerlink" href="#c-speaker-diarization" title="Permanent link">&para;</a></h4>
+<p>对于多人对话的播客（Podcast）或会议视频，如果将语料压成单轨字符串，模型在训练时无法分辨提问者与回答者，会学到混乱的角色对应关系。Diarization 算法可以把长音频按说话人切分并标注为 <code>[Speaker A]: 01:23-01:30</code> 与 <code>[Speaker B]: 01:31-01:40</code> 的形式，保留说话人信息。</p>
+<h3 id="1023">10.2.3 字幕、语音、画面的时间对齐<a class="headerlink" href="#1023" title="Permanent link">&para;</a></h3>
+<p>完成关键帧抽取、ASR 字幕生成与音源分离后，进入流水线中较为关键的环节：<strong>跨模态时间对齐（Cross-Modal Geometric &amp; Temporal Lock）</strong>。</p>
+<p>一条 ASR 字幕“Hello World!”对应的具体毫秒区间和口型帧是哪些？如果不建立这种时间锚点（Temporal Anchors），模型不仅难以学到声画同步，连口型匹配也无法稳定预测。</p>
+<p><a class="glightbox" href="../../../images/part3/av_alignment_diagram.png" data-type="image" data-width="auto" data-height="auto" data-desc-position="bottom"><img alt="多轨时间轴强制锁死对齐" src="../../../images/part3/av_alignment_diagram.png" /></a>
+<em>图 10-4：多片段时序对齐示意 —— 图中展示三条异构轨道：顶端是视觉关键帧缩略图，中段是音频波形序列，底端是离散的转写 Token 文本；当纵向时间锚轴（例如 4.2 秒处的 Geometric Lock）将三条轨道在同一时间点对齐（如画面端起水杯 + 声音波谷 + 文本“水杯”）时，该流媒体片段才能形成可用于训练的多模态对齐样本。</em></p>
+<p>工业实践中通常会部署 <strong>Multi-modal Temporal Alignment Engine（多模时序对齐引擎）</strong>。当前端识别器给出形如 <code>&lt;start:2.1s&gt;&lt;end:4.5s&gt;</code> 的时间区间时，对齐代码会按浮点数计算反查视频中对应的帧。最终这些对齐信息会以包含元数据标签（Meta-data tags）的 <strong>多轨混合序列（Mixed Token Pipeline）</strong>，以 JSONL 等结构化格式提供给训练 Dataloader 使用。</p>
+<hr />
+<h2 id="103">10.3 事件标签生成与错位过滤<a class="headerlink" href="#103" title="Permanent link">&para;</a></h2>
+<p>10.2 节完成了视听轨道的拆分与时间对齐，但这批基础结构化样本（Raw Structured Samples）在进入预训练之前，仍缺少更高层的“事件监督信号（Event Grounding Signals）”和“错位过滤器（Misalignment Killer）”。</p>
+<h3 id="1031-event-detection-grounding">10.3.1 多层级动态事件标签生成（Event Detection &amp; Grounding）<a class="headerlink" href="#1031-event-detection-grounding" title="Permanent link">&para;</a></h3>
+<p>仅有画面和转写文本不足以表达视频中的“动作流”。工业管线中会并行调用一批高级标注辅助模型（如 LLaVA-Video、Video-LLaMA 等行为理解模型）作为旁路集群，对对齐后的视频小切片执行<strong>异步标注（Asynchronous Captioning Batch）</strong>。</p>
+<p>这些模型不仅给出整段视频的全局一句话概括（例如“一个青年在滑板公园表演翻转失败摔倒”），还会输出阶段性的细粒度时序标注（Detailed Temporal Captions）：
+- <code>&lt;time: 01.2s-03.5s&gt;</code>: 男生助跑并借力跃上 U 型池抛面...
+- <code>&lt;time: 03.5s-05.1s&gt;</code>: 男生试图在高空实现 360 度转体，但其背部失去平衡...
+- <code>&lt;time: 05.1s-06.8s&gt;</code>: 男生后背重重砸在混凝土滑道上，产生沉闷的低频冲击声响。</p>
+<p>将这种带前因后果的标签写回上一节生成的 JSONL 多轨对齐结构中，视频样本在训练中才能承载明确的时空语义信号。</p>
+<h3 id="1032">10.3.2 音画错位检测<a class="headerlink" href="#1032" title="Permanent link">&para;</a></h3>
+<p>长时序数据的常见风险之一是“画面与声音不对应”。例如，视频画面是一头安静吃草的长颈鹿，UP 主却在该段直接混入电音舞曲或与画面无关的游戏解说音频。这类数据进入基座训练后，模型在面对长颈鹿画面时，可能会生成与画面无关的音频联想，引发幻觉（Hallucinations）。</p>
+<p>为减少这类问题，流水线中需要引入严格的检测与复检流程：</p>
+<p><strong>表10-1：时序流超频数据缺陷类型与多层检测处理动作表</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">时空严重缺陷类型与底座视角特征表现</th>
+<th style="text-align: left;">缺陷诱发根源与物理排场剖析</th>
+<th style="text-align: left;">多轨对齐平台核心防御拦截动作（检测策略与方法）</th>
+<th style="text-align: left;">风险等级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>音画错位（Audio-Visual Hallucination Mismatch）</strong>：画面是寂静森林的远景，但人声音轨却在快速解说 FPS 比赛实况。</td>
+<td style="text-align: left;">多为二创剪辑或自动压片时的音轨混淆（Audio Track Bleeding）。</td>
+<td style="text-align: left;"><strong>使用预训练判别器计算特征余弦相似度</strong>：抽取当前关键帧的 CLIP 视觉向量，与音频语义向量计算夹角。如果跨模态相似度（Cosine Similarity）低于阈值，就丢弃该 10 秒片段的全部标注。</td>
+<td style="text-align: left;">高风险 P0</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>画面损坏：闪烁、黑屏、极端马赛克（Frame Corruption &amp; Dark Out）</strong></td>
+<td style="text-align: left;">视频采集端比特率不足，或传输过程中存在严重丢包。</td>
+<td style="text-align: left;">计算片段的<strong>亮度直方图均值与锐度得分（Laplacian Variance Filters）</strong>。若像素几乎全黑或均方差异常，立即拦截并送入废弃池（Trash-pool），并将异常退回抽帧模块排查 C++ 解码算子。</td>
+<td style="text-align: left;">严重 P1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>背景噪声压过人声（Irreversible Noise Flooding）</strong></td>
+<td style="text-align: left;">麦克风破音被增益放大，或背景中存在难以分离的高频噪声。</td>
+<td style="text-align: left;">使用小模型对全频带频谱（Spectrogram）执行<strong>声学信噪比评估（SNR Estimation）</strong>，低于阈值的人声轨标记为高风险样本。在对话相关项目中通常直接舍弃。</td>
+<td style="text-align: left;">视用途而定 P2</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="104">10.4 成本核算、量化设计与吞吐优化<a class="headerlink" href="#104" title="Permanent link">&para;</a></h2>
+<p>只在纯文本 LLM 上估算成本的人，在接触多模态时序管线后会发现 GPU 账单显著上升。</p>
+<p>在纯文本时代，一台 64 核 CPU 服务器一天内可以解析数亿个 Markdown 爬虫文件；而在视频清洗场景下，仅是读取 1 万小时的高清 MP4，并在内存中解码为张量供特征抽取使用，就足以把这台服务器的 CPU 与 I/O 占满。</p>
+<h3 id="1041-cpugpu-io">10.4.1 解码算力（CPU/GPU）与 I/O 带宽<a class="headerlink" href="#1041-cpugpu-io" title="Permanent link">&para;</a></h3>
+<p>关键问题在于使用何种硬件执行视频帧解码（Decoding）。
+1. <strong>纯 CPU 解码方案的局限</strong>：早期架构中，部分团队会使用 CPU + 多线程 ffmpeg 或 cv2 进行软件解码。在高并发下，这种方案容易将 PCIe 与 RAM 的带宽占满，瓶颈很快显现。
+2. <strong>硬件视频解码（Hardware Video Decoders, NVDEC）</strong>：更稳妥的做法是把解码任务下放给 GPU 芯片中的专用解码模块（如英伟达 NVDEC）。借助显存高带宽，可以实现单机数百路视频流并发解码，把 CPU 解放出来用于后续校验与评估。虽然 GPU 实例成本较高，但在大规模集群下能显著提升整体吞吐。</p>
+<p><strong>表10-2：长时序音视频大规模集群（1000 H100 等效）核心处理成本分类分解与降本优化矩阵</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">后端管线底层切削流程阶段</th>
+<th style="text-align: left;">服务器核心资源高度开销大口径分析</th>
+<th style="text-align: left;">云成本折算与集群资金占比（大概经验概略占比）</th>
+<th style="text-align: left;">对应的极限吞吐量优化优化底层与工程缓解绝招策略</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>阶段 1：原始视频拉流与分块缓冲下载</strong></td>
+<td style="text-align: left;">千兆网卡的出入流量，对象存储节点的高并发 I/O（占用骨干网带宽）。</td>
+<td style="text-align: left;">10% - 15%</td>
+<td style="text-align: left;">不建议直接访问长存储池。引入边缘缓存层（Edge Caching Layers），按预先编排的分片索引把数百 GB 文件拆成小碎片，预加载到 GPU 节点附近的本地 NVMe 缓存。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>阶段 2：画面解码与自适应过采样</strong></td>
+<td style="text-align: left;">是成本占比最高的阶段。主要消耗显卡上的专用视频解码单元（NVDEC），以及配合调度的少量 CPU 算力。</td>
+<td style="text-align: left;"><strong>45% - 50%（集群成本占比最高）</strong></td>
+<td style="text-align: left;">采用多尺度硬件下采样组合方案，并在调用层用 DeepSpeed-UIO、DALI 等框架替换基于 Python OpenCV 的单线程实现，将单位时间内的解码帧数提到上限。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>阶段 3：异步标注与声学提取（大规模重描述、WhisperX 等）</strong></td>
+<td style="text-align: left;">密集的高端 GPU 推理算力消耗，对显存占用较高。</td>
+<td style="text-align: left;">15% - 20%</td>
+<td style="text-align: left;">使用量化版小模型（INT8 或更低位宽）；引入动态批处理（Dynamic Batching），减少不等长序列因 Pad 填充带来的无效计算。</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>阶段 4：多模态切块、时序排序与封装写入存储</strong></td>
+<td style="text-align: left;">后端 NAS / S3 对象存储的高并发小文件写入 I/O。</td>
+<td style="text-align: left;">少于 10%</td>
+<td style="text-align: left;">避免使用大量小文件的存储策略。采用 WebDataset 或 TFRecord 等块状容器格式，以管道流形式连续写入高速硬盘，可显著降低读写 I/O 压力（约 90%）。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="105">10.5 真实失败案例与下一章衔接<a class="headerlink" href="#105" title="Permanent link">&para;</a></h2>
+<h3 id="1051-p">10.5.1 万小时视频失败复盘（P 项目系列）<a class="headerlink" href="#1051-p" title="Permanent link">&para;</a></h3>
+<p>某次内部视频自研项目中，团队准备了超过 6 万小时的高清短剧与教程素材。在大约三个月的数据集制作过程中，这批数据最终因质量问题而无法直接使用。
+原因在于工程架构中<strong>省去了若干阶段性校准步骤</strong>：音频特征分离接口存在一个不到 30 毫秒的读取偏置（Reading Offset Bug）。在多次切分与合并后，该偏置在数据库的后半段累积放大，最终导致约 70% 时长的切片中，演员的声音轨道相对口型与动作画面出现了明显的提前或滞后。</p>
+<p>将这些时空一致性受损的样本送入 800 亿参数模型训练后，模型并未表现出预期的泛化能力。经过两周训练后，模型在多项基准评测中出现了系统性偏差——例如看到长发的人挥手打招呼，会预测后续音频是狗叫或玻璃破碎。这印证了第 1 章开篇就提及的观点：
+<strong>多模态数据预处理工程的稳定性，是模型效果可被复现的前提。</strong></p>
+<h3 id="1052">10.5.2 本章总结与下一章衔接<a class="headerlink" href="#1052" title="Permanent link">&para;</a></h3>
+<p>回顾整体进展：从第一、二篇的纯文本清洗，到第八、九章的图文二维数据处理，再到本章对长时序四维音视频的拆分与对齐，我们已经建立起一套覆盖多模态原始数据的清洗与结构化方法体系，可将异构原始片段提炼为可用于训练的样本。</p>
+<p>但这些工作主要解决了“向模型输入什么”的问题，模型本身仍然不知道在多种特征中应该按照怎样的优先级响应人类指令。要让一个具备时空感知能力的多模态模型变成一个稳定、听话且符合人类价值观的助手系统，需要进入对齐与指令数据的环节。
+下一卷将进入<strong>《第四篇：指令对齐与人类偏好数据》</strong>，并由第 11 章的跨模态对齐与第 12 章展开后续讨论。</p>
+<h2 id="_1">参考文献<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<!-- 待补充：本章引用的论文、博客、工具与官方文档。补全策略见 publishing/citations_progress.md。 -->
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections", "navigation.expand", "navigation.indexes", "navigation.top", "navigation.footer", "toc.follow", "search.suggest", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.525ec568.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  <script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(() => { lightbox.reload() });
+</script></body>
+</html>
